@@ -2,7 +2,6 @@
 
 Add text mark to image.
 
-
 ## Install
 
 ```shell
@@ -53,3 +52,6 @@ func TestText(t *testing.T) {
 
 ![after](./.github/demo_watermark.jpg)
 
+## License
+
+MIT and Inspired by [weixin_40660221](https://blog.csdn.net/weixin_40660221/article/details/135937187).
