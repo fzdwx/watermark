@@ -1,6 +1,7 @@
 package watermark
 
 import (
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -15,7 +16,7 @@ func TestText(t *testing.T) {
 	}
 	defer f.Close()
 	option := DefaultTextMarkOption()
-	mask, err := c.AddTextMask("Hello", f, ImageFormatJpg, option)
+	mask, err := c.AddTextMark("Hello", f, ImageFormatJpg, option)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,6 +50,11 @@ func TestCost(t *testing.T) {
 		}
 	})
 
+	cost(func() {
+		if err := genGifText(c, "测试测试测试测试测试测试"); err != nil {
+			t.Fatal(err)
+		}
+	})
 }
 
 func genText(c Client, text string) error {
@@ -59,7 +65,7 @@ func genText(c Client, text string) error {
 	defer f.Close()
 
 	option := DefaultTextMarkOption()
-	mask, err := c.AddTextMask(text, f, ImageFormatJpg, option)
+	mask, err := c.AddTextMark(text, f, ImageFormatJpg, option)
 	if err != nil {
 		return err
 	}
@@ -70,7 +76,27 @@ func genText(c Client, text string) error {
 	}
 	_, err = f.Write(mask)
 	return nil
+}
 
+func genGifText(c Client, text string) error {
+	f, err := os.Open("./.github/demo.gif")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	option := DefaultTextMarkOption()
+	mask, err := c.AddTextMark(text, f, ImageFormatGif, option)
+	if err != nil {
+		return err
+	}
+
+	f, err = os.Create(fmt.Sprintf(".github/demo_watermark_%d.gif", time.Now().UnixNano()))
+	if err != nil {
+		return err
+	}
+	_, err = f.Write(mask)
+	return nil
 }
 
 func cost(f func()) {

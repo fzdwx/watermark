@@ -8,14 +8,15 @@ import (
 
 type Client interface {
 
-	// AddTextMask 添加文字水印
-	// text 水印文字
-	// source 图片源
-	// format 图片格式
-	// option 水印参数 see DefaultTextMarkOption
-	AddTextMask(text string, source io.Reader, format ImageFormat, option *TextMarkOption) ([]byte, error)
+	// AddTextMark add text mark
+	// text water text
+	// source image source
+	// format image format
+	// option see DefaultTextMarkOption
+	AddTextMark(text string, source io.Reader, format ImageFormat, option *TextMarkOption) ([]byte, error)
 }
 
+// NewClient new watermark client
 func NewClient() Client {
 	return &client{}
 }
@@ -33,14 +34,16 @@ func init() {
 type client struct {
 }
 
-func (c *client) AddTextMask(text string, source io.Reader, format ImageFormat, option *TextMarkOption) ([]byte, error) {
+func (c *client) AddTextMark(text string, source io.Reader, format ImageFormat, option *TextMarkOption) ([]byte, error) {
 	if option == nil {
 		option = DefaultTextMarkOption()
 	}
+
+	img := c.newTextImg(text, option)
 	switch format {
 	case ImageFormatGif:
-		return c.addTextMaskToGif(text, source, option)
+		return c.addTextMarkToGif(source, img, option)
 	default:
-		return c.addTextMaskToImage(text, source, format, option)
+		return c.addTextMarkToImage(source, format, img, option)
 	}
 }
