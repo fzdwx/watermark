@@ -1,8 +1,6 @@
 package watermark
 
 import (
-	_ "embed"
-	"github.com/golang/freetype/truetype"
 	"io"
 )
 
@@ -16,19 +14,20 @@ type Client interface {
 	AddTextMark(text string, source io.Reader, format ImageFormat, option *TextMarkOption) ([]byte, error)
 }
 
+type Option struct {
+	// Output image quality
+	// for jpg/jpeg/webp
+	// 0~100
+	Quality float64
+	// Watermark Image gap
+	StepX, StepY int
+	// Watermark Image rotate angle
+	Skew float64
+}
+
 // NewClient new watermark client
 func NewClient() Client {
 	return &client{}
-}
-
-var defaultFont *truetype.Font
-
-//go:embed default.ttc
-var defaultFontTtc []byte
-
-func init() {
-	font, _ := truetype.Parse(defaultFontTtc)
-	defaultFont = font
 }
 
 type client struct {
@@ -42,8 +41,8 @@ func (c *client) AddTextMark(text string, source io.Reader, format ImageFormat, 
 	img := c.newTextImg(text, option)
 	switch format {
 	case ImageFormatGif:
-		return c.addTextMarkToGif(source, img, option)
+		return c.addTextMarkToGif(source, img, option.Option)
 	default:
-		return c.addTextMarkToImage(source, format, img, option)
+		return c.addTextMarkToImage(source, format, img, option.Option)
 	}
 }
