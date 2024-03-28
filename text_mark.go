@@ -78,8 +78,7 @@ func (c *client) addTextMarkToImage(source io.Reader, format ImageFormat, mark d
 	}
 
 	targetImg := image.NewNRGBA(img.Bounds())
-	draw.Copy(targetImg, img.Bounds().Min, img, img.Bounds(), draw.Src, nil)
-	//draw.Draw(targetImg, targetImg.Bounds(), img, img.Bounds().Min, draw.Src)
+	draw.Draw(targetImg, targetImg.Bounds(), img, img.Bounds().Min, draw.Src)
 	c.draw(targetImg, mark, option.StepX, option.StepY)
 
 	var buf bytes.Buffer
