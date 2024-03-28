@@ -61,7 +61,7 @@ func DefaultTextMarkOption() *TextMarkOption {
 		Dpi:       150,
 		StepX:     100,
 		StepY:     100,
-		Skew:      22.5,
+		Skew:      10,
 	}
 }
 
@@ -104,6 +104,8 @@ func (c *client) draw(
 	option *TextMarkOption,
 ) {
 	textImg := c.newTextImg(text, option.Font, option.FontSize, image.NewUniform(option.TextColor), option.Dpi)
+	rotated := imaging.Rotate(textImg, option.Skew, image.Transparent)
+
 	for y := -option.StepY; y <= newImg.Bounds().Max.Y+option.StepY; y += option.StepY {
 		for x := -option.StepX; x <= newImg.Bounds().Max.X+option.StepX; x += option.StepX {
 			offsetX := 0
@@ -111,7 +113,6 @@ func (c *client) draw(
 				offsetX = option.StepX / 2
 			}
 
-			rotated := imaging.Rotate(textImg, option.Skew, image.Transparent)
 			draw.Draw(newImg, rotated.Bounds().Add(image.Pt(x+offsetX, y)), rotated, image.Pt(0, 0), draw.Over)
 		}
 	}
